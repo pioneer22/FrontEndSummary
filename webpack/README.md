@@ -1,0 +1,213 @@
+# webpack五个核心概念
+1. Entry
+  入口提示，webpack以哪个文件为起点开始打包。
+2. Output
+  输出提示，webpack打包后的资源bundles输出到哪里去，以及如何命名。
+3. Loader
+  Loader 让webpack能够去处理那些非javaScript文件(webpack自身只理解JavaScript)
+4. plugins
+  插件(plugins)可用于执行范围更广的任务。插件的范围包括，从打包优化和压缩，一直到重新定义环境中的变量等。
+5. Mode
+  模式(Mode)指示webpack使用相应模式的配置。
+
+# 开发环境配置
+  1. 提取CSS成单独文件
+  2. CSS的兼容性处理
+  3. 压缩CSS
+  4. js语法检查eslint
+  5. js兼容性处理eslint
+  6. 压缩html和js
+
+# 生产环境配置
+  1. HMR
+  2. source-map
+  3. oneOf
+  4. 缓存
+  5. tree shaking
+  6. codesplit
+  7. 懒加载和预加载
+  8. PWA
+  9. 多进程打包
+  10. externals
+  11. dll
+
+# webpack性能优化
+* 开发环境性能优化
+* 生产环境性能优化
+
+## 开发环境性能优化
+* 优化打包构建速度
+  * HMR
+* 优化代码调试
+  * source-map
+
+   source-map: 一种提供源代码到构建后代码映射技术（如果构建后代码出错了，通过映射可以追踪到源代码错误）
+  [inline-|hidden-|eval-][nosources-][cheap-[module-]]source-map
+  source-map: 外部
+    错误代码的准确信息和源代码的错误位置
+  inline-source-map: 内联
+    只生成一个内联source-map
+    错误代码的准确信息和源代码的错误位置
+  hidden-source-map: 外部
+    错误代码的错误原因，但是没有错误位置
+    不能追踪源代码错误，只能提示到构建后代码的错误位置
+  eval-source-map: 内联
+    每一个文件都生成对应的source-map,都在eval
+    错误代码的准确信息和源代码的错误位置
+  nosources-source-map: 外部
+    错误代码的准确信息，但是没有任何源代码的信息
+  cheap-source-map: 外部
+    错误代码的准确信息和源代码的错误位置
+    只能精确到行
+  cheap-module-source-map: 外部
+    错误代码的准确信息和源代码的错误位置
+    module会将loader的source-map加入
+
+  内联和外部的区别：1.外部生成了文件，内联没有  2. 内联构建速度更快
+
+  开发环境： 速度快，调试更友好
+    速度快（eval>inline>cheap>...）
+      eval-cheap-source-map
+      eval-source-map
+    调试更友好
+      source-map
+      cheap-module-source-map
+      cheap-source-map
+    --> eval-source-map / eval-cheap-source-map
+
+  生产环境： 源代码要不要隐藏？ 调试要不要更友好
+    内联会让代码体积变大，所以在生产环境不用内联
+    nosources-source-map  全部隐藏
+    hidden-source-map 只隐藏源代码，会提示构建后代码错误信息
+    --> source-map / cheap-module-source-map
+
+## 生产环境性能优化
+* 优化打包构建速度
+  * oneOf
+  * babel缓存
+  * 多进程打包
+  * externals
+  * dll
+  
+* 优化代码运行的性能
+  * 缓存(hash | chunkhash | contenthash)
+  * tree shaking
+  * code split
+  * 懒加载 / 预加载
+  * PWA
+
+  缓存：
+    babel缓存：
+      cacheDirectory: true
+      --> 让第二次打包构建速度更快
+    文件资源缓存：
+      hash: 每次webpack构建时会生成一个唯一的hash值。
+        问题： 因为js和css同时使用一个hash值。
+          如果重新打包会导致所有缓存失效（可能只改动一个文件）
+      chunkhash: 根据chunk生成的hash值。如果打包来源于同一个chunk, 那么hash值就一样
+        问题： js和css的hash值还是一样的
+          因为css是在js中被引入的，所以同属于一个chunk
+      contenthash: 根据文件的内容生成hash值。不同文件hash值一定不一样
+      --> 让代码上线运行缓存更好使用
+
+  tree shaking: 去除无用代码
+    前提： 1.必须使用ES6模块  2.开启production模块
+    作用：减少代码体积
+    在package.json中配置
+      "sideEffects": false  所有代码都没有副作用（都可以进行tree shaking）
+      问题：可能会把css / @babel/polyfill  (副作用) 文件干掉
+    "sideEffects": ["*.css","*.less"]
+
+### webpack5
+
+下载：npm i webpack@next webpack-cli -D
+
+* webpack5重点关注以下内容
+1. 通过持久缓存提高构建性能。
+2. 使用更好的算法和默认值来改善长期缓存。
+3. 通过更好的树摇和代码生成来改善捆绑包的大小。
+4. 清除属于怪异状态的内部结构，同时在v4中实现功能而不引入任何重大更改。
+5. 通过引入重大更改来为将来的功能做准备，以使我们能够尽可能长时间地使用v5。
+
+* 自动删除 Node.js Polyfills
+在许多情况下, polyfill是不必要的。
+webpack5会自动停止填充这些核心模块，并专注于前端兼容的模块。
+
+迁移： 
+  尽可能尝试使用与前端兼容的模块。
+  可以为node.js核心模块手动添加一个polyfill。错误消息将提示如何实现该目标。
+
+* chunk和模块ID
+  添加了用于长期缓存的新算法。在生产模式下默认情况下启用这些功能。
+
+* Chunk ID
+  可以不使用 import(/* webpackChunkName: "name" */ "module") 在开发环境来为chunk命名，
+  生产环境还是有必要的，webpack内部有chunk命名规则，不再是以id(0,1,2)命名了
+
+* Tree Shaking
+1. webpack现在能处理对嵌套模块的Tree Shaking
+
+// data.js
+export const a = 1
+export const b = 2
+
+// module.js
+import * as data from './data'
+export { data } 
+
+// user.js
+import * as module from './module'
+console.log(module.data.a)
+
+在生产环境中，data模块暴露的b会被删除
+
+2. webpack5 现在能够处理多个模块之间的关系
+import { something } from './something'
+
+function useSomething(){
+  return something;
+}
+
+export function test(){
+  return useSomething()
+}
+
+当设置 'sideEffects': false时, 一旦发现test方法没有使用，不但删除test, 还会删除'./something'
+
+3. webpack5现在能处理对Commonjs的tree shaking
+output
+webpack4 默认只能输出ES5代码
+webpack5 开始新增一个属性output.ecmaVersion, 可以生成ES5和ES6/ES2015代码
+如：output.ecmaVersion:2015
+
+* splitChunk
+// webpack4 
+minSize: 30000
+
+// webpack5
+minSize: {
+  javascript: 30000,
+  style: 50000
+}
+
+* Caching
+// 配置缓存
+cache: {
+  // 磁盘缓存
+  type: 'filesystem',
+  buildDependencies: {
+    // 当配置修改时，缓存失效
+    config: [__filename]
+  }
+}
+
+缓存将存储到 node_modules/.cache/webpack
+
+* 监视输出文件
+之前webpack总是在第一次构建时输出全部文件，但是监视重新构建时会只更新修改的文件
+此次更新在第一次构建时会找到输出文件，看是否有变化，从而决定要不要输出全部文件
+
+默认值
+entry: "./src/index.js",
+output.path: path.resolve(__dirname,"dist)
+output.filename: "[name].js"

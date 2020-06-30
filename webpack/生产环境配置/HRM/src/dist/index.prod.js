@@ -1,0 +1,1 @@
+"use strict";var _data=_interopRequireDefault(require("./data.json"));function _interopRequireDefault(e){return e&&e.__esModule?e:{default:e}}require("./index.css"),require("./index.less"),require("./font/iconfont.css"),console.log(_data.default);

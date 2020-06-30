@@ -1,0 +1,1 @@
+"use strict";require("../css/a.css"),require("../css/b.css");var add=function(s,e){return s+e};console.log(add(2,3));var promise=new Promise(function(s){setTimeout(function(){console.log("promise"),s()},1e3)});console.log(promise);

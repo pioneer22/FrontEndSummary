@@ -1,0 +1,6 @@
+.box{
+  height: 50px;
+  background: yellow;
+  display: flex;
+  backface-visibility: hidden;
+}
