@@ -9,7 +9,7 @@
                    class="link">mixin</router-link>
 
       <el-button type="primary"
-                 size="small">666</el-button>
+                 size="small">btn</el-button>
     </div>
   </div>
 </template>
