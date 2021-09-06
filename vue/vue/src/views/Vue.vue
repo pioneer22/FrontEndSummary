@@ -391,187 +391,188 @@
 </template>
 
 <script>
-import VFor from "@/components/VFor.vue";
-import render from "@/components/render.vue";
-import Toggle from "@/components/Toggle.vue";
+  import VFor from "@/components/VFor.vue";
+  import render from "@/components/render.vue";
+  import Toggle from "@/components/Toggle.vue";
 
-import { store, mutations } from "@/utils/observable.js";
-import { mixins } from "@/utils/mixins.js";
+  import { store, mutations } from "@/utils/observable.js";
+  import { mixins } from "@/utils/mixins.js";
 
-export default {
-  name: "Vue",
-  mixins: [mixins],
-  data() {
-    return {
-      visible: false,
+  export default {
+    name: "Vue",
+    mixins: [mixins],
+    data() {
+      return {
+        visible: false,
 
-      title: null,
-      users: [
-        { name: "john", id: 1 },
-        { name: "mike", id: 2 },
-      ],
-      persons: { name: "Lion King", released: 2019, director: "Jon" },
-      list: ["qwer", "asdf", "zxcv"],
-      num: 666,
+        title: null,
+        users: [
+          { name: "john", id: 1 },
+          { name: "mike", id: 2 },
+        ],
+        persons: { name: "Lion King", released: 2019, director: "Jon" },
+        list: ["qwer", "asdf", "zxcv"],
+        num: 666,
 
-      direction: "left",
+        direction: "left",
 
-      searchValue: "",
-      level: 1,
+        searchValue: "",
+        level: 1,
 
-      someEvent: true ? "click" : "dbclick",
+        someEvent: true ? "click" : "dbclick",
 
-      testFilter: "hello",
+        testFilter: "hello",
 
-      rawId: "qwert",
+        rawId: "qwert",
 
-      show: true,
+        show: true,
 
-      msg: false,
-    };
-  },
-
-  provide: {
-    foo: "bar",
-  },
-
-  components: {
-    // 异步组件
-    propValidator: () =>
-      import(/* webpackChunkName:"propValidator" */ "@/components/propValidator.vue"),
-    /*
-      完整写法
-      propValidator:()=>({
-        component: import(/* webpackChunkName:"propValidator" * / "@/components/propValidator.vue"),
-        delay: 200, //延迟几毫秒
-        timeout: 3000, // 加载几毫秒之后就超时, 触发error组件
-        loading: LoadingComponent, //组件未加载回来前显示
-        error: ErrorComponent // 组件超时时显示
-      }),
-    */
-    VFor,
-    render,
-    Toggle,
-    CustomInput: () =>
-      import(/* webpackChunkName:"CustomInput" */ "@/components/CustomInput.vue"),
-  },
-
-  computed: {
-    someComputedProperty() {
-      // update the computed prop
-      return this.num;
+        msg: false,
+      };
     },
 
-    userInfo() {
-      return store.userInfo;
+    provide: {
+      foo: "bar",
     },
 
-    usedNotThis({ $attrs, $route, $store, $listener, $refs }) {
-      console.log("$route:", $route);
-      console.log("$store:", $store);
-      console.log("$refs:", $refs);
-      return "computed 第一个参数解构数据";
+    components: {
+      // 异步组件
+      propValidator: () =>
+        import(/* webpackChunkName:"propValidator" */ "@/components/propValidator.vue"),
+      /*
+        完整写法
+        propValidator:()=>({
+          component: import(/* webpackChunkName:"propValidator" * / "@/components/propValidator.vue"),
+          delay: 200, //延迟几毫秒
+          timeout: 3000, // 加载几毫秒之后就超时, 触发error组件
+          loading: LoadingComponent, //组件未加载回来前显示
+          error: ErrorComponent // 组件超时时显示
+        }),
+      */
+      VFor,
+      render,
+      Toggle,
+      CustomInput: () =>
+        import(/* webpackChunkName:"CustomInput" */ "@/components/CustomInput.vue"),
     },
-  },
 
-  watch: {
-    "$route.query.id"() {
-      console.log("使用引号监听嵌套属性:", this.$route.query.id);
-    },
+    computed: {
+      someComputedProperty() {
+        // update the computed prop
+        return this.num;
+      },
 
-    someComputedProperty(newVal, oldVal) {
-      // Do something when the computed prop is updated
-      console.log(`监听数据: oldVal:${oldVal}, newVal:${newVal}`);
-    },
+      userInfo() {
+        return store.userInfo;
+      },
 
-    list: {
-      deep: true,
-      handler() {
-        console.log("数组或对象发生改变~");
+      usedNotThis({ $attrs, $route, $store, $listener, $refs }) {
+        console.log("$route:", $route);
+        console.log("$store:", $store);
+        console.log("$refs:", $refs);
+        return "computed 第一个参数解构数据";
       },
     },
 
-    searchValue: {
-      handler(newValue, oldValue) {
-        if (newValue !== oldValue) {
-          // 执行操作
+    watch: {
+      "$route.query.id"() {
+        console.log("使用引号监听嵌套属性:", this.$route.query.id);
+      },
+
+      someComputedProperty(newVal, oldVal) {
+        // Do something when the computed prop is updated
+        console.log(`监听数据: oldVal:${oldVal}, newVal:${newVal}`);
+      },
+
+      list: {
+        deep: true,
+        handler() {
+          console.log("数组或对象发生改变~");
+        },
+      },
+
+      searchValue: {
+        handler(newValue, oldValue) {
+          if (newValue !== oldValue) {
+            // 执行操作
+          }
+        },
+
+
+        // 配置立即执行属性
+        immediate: true,
+      },
+    },
+
+    methods: {
+      testRef() {
+        this.$refs.child.setRef();
+        this.num = this.num + 2;
+      },
+
+      keyDown() {
+        console.log("测试修饰符!");
+      },
+
+      handleSomeEvent() {
+        console.log("点击了~~");
+      },
+
+      fuTempEvent() {
+        console.log("父组件触发原生事件通过 .native修饰符~");
+      },
+    },
+
+    created() {
+      // 加载指令
+      this.visible = true;
+      setTimeout(() => {
+        this.visible = false;
+      }, 1000);
+
+      let that = this;
+      document.onkeydown = function (e) {
+        e = window.event || e;
+        if (e.code.toLowerCase() === "enter") {
+          that.keyDown();
         }
+      };
+
+      mutations.setUserInfo({
+        name: "组件中引用数据",
+      });
+    },
+
+    mounted() {
+      console.log("Vue mounted");
+    },
+
+    filters: {
+      capitalize: function (value) {
+        if (!value) return "";
+        value = value.toString();
+        return value.charAt(0).toUpperCase() + value.slice(1);
       },
-
-      // 配置立即执行属性
-      immediate: true,
-    },
-  },
-
-  methods: {
-    testRef() {
-      this.$refs.child.setRef();
-      this.num = this.num + 2;
     },
 
-    keyDown() {
-      console.log("测试修饰符!");
+    beforeRouteEnter(to, from, next) {
+      console.log("Vue beforeRouteEnter");
+      next((vm) => {
+        // 钩子执行前组件还未被创建, vm相当与组件的this
+        // console.log("vm:", vm);
+      });
     },
 
-    handleSomeEvent() {
-      console.log("点击了~~");
+    beforeRouteUpdate(to, from, next) {
+      console.log("Vue beforeRouteUpdate");
+      next();
     },
 
-    fuTempEvent() {
-      console.log("父组件触发原生事件通过 .native修饰符~");
+    beforeRouteLeave(to, from, next) {
+      console.log("Vue beforeRouteLeave");
+      next();
     },
-  },
-
-  created() {
-    // 加载指令
-    this.visible = true;
-    setTimeout(() => {
-      this.visible = false;
-    }, 1000);
-
-    let that = this;
-    document.onkeydown = function (e) {
-      e = window.event || e;
-      if (e.code.toLowerCase() === "enter") {
-        that.keyDown();
-      }
-    };
-
-    mutations.setUserInfo({
-      name: "组件中引用数据",
-    });
-  },
-
-  mounted() {
-    console.log("Vue mounted");
-  },
-
-  filters: {
-    capitalize: function (value) {
-      if (!value) return "";
-      value = value.toString();
-      return value.charAt(0).toUpperCase() + value.slice(1);
-    },
-  },
-
-  beforeRouteEnter(to, from, next) {
-    console.log("Vue beforeRouteEnter");
-    next((vm) => {
-      // 钩子执行前组件还未被创建, vm相当与组件的this
-      // console.log("vm:", vm);
-    });
-  },
-
-  beforeRouteUpdate(to, from, next) {
-    console.log("Vue beforeRouteUpdate");
-    next();
-  },
-
-  beforeRouteLeave(to, from, next) {
-    console.log("Vue beforeRouteLeave");
-    next();
-  },
-};
+  };
 </script>
 
 <style lang="scss" scoped></style>
