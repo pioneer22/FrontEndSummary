@@ -1,26 +1,31 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue';
-import App from './App';
-import router from './router';
+import Vue from 'vue'
+import App from './App.vue'
+import router from './router'
+import store from './store'
+import Antd from 'ant-design-vue'
+import 'ant-design-vue/dist/antd.css'
 
-import less from 'less';
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import echarts from 'echarts'
 
-import './components/commonComponents/index';
-import './assets/directive/index';
-import './assets/mixin/index';
+// 全局自定义指令
+import '@/utils/directives.js';
 
-Vue.config.productionTip = false;
+// 全局过滤器
+import '@/utils/filters.js';
 
-Vue.use(less);
-Vue.use(ElementUI);
+// 绑定全局loading
+import '@/utils/extendLoading';
 
-/* eslint-disable no-new */
+import global from '@/components/global.js';
+Vue.use(global);
+
+Vue.use(Antd);
+
+Vue.config.productionTip = false
+Vue.prototype.$echarts = echarts
+
 new Vue({
-  el: '#app',
   router,
-  components: { App },
-  template: '<App/>'
-})
+  store,
+  render: h => h(App)
+}).$mount('#app')
