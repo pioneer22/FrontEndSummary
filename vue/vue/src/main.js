@@ -5,7 +5,7 @@ import store from './store'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 
-import echarts from 'echarts'
+// import echarts from 'echarts'
 
 // 全局自定义指令
 import '@/utils/directives.js';
@@ -14,7 +14,10 @@ import '@/utils/directives.js';
 import '@/utils/filters.js';
 
 // 绑定全局loading
-import '@/utils/extendLoading';
+import '@/utils/extendLoading.js';
+
+// 全局组件
+import '@/utils/components.js';
 
 import global from '@/components/global.js';
 Vue.use(global);
@@ -22,7 +25,7 @@ Vue.use(global);
 Vue.use(Antd);
 
 Vue.config.productionTip = false
-Vue.prototype.$echarts = echarts
+// Vue.prototype.$echarts = echarts
 
 new Vue({
   router,

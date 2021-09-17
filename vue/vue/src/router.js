@@ -7,13 +7,13 @@ import css from './router/css';
 import vue from './router/vue';
 
 const originalPush = Router.prototype.push;
-Router.prototype.push = function push(location) {
+Router.prototype.push = function push (location) {
   return originalPush.call(this, location).catch(err => err);
 }
 
 Vue.use(Router);
 
-let router =  new Router({
+let router = new Router({
   routes: [
     {
       path: '/',
@@ -25,7 +25,7 @@ let router =  new Router({
           name: 'VUE',
           path: '/VUE',
           redirect: "/VUEBase",
-          component: () => import(/* webpackChunkName: "JS" */ './template/jsTemp.vue'),
+          component: () => import(/* webpackChunkName: "VUE" */ './template/jsTemp.vue'),
           children: vue
         },
         {
@@ -37,7 +37,7 @@ let router =  new Router({
           name: 'CSS',
           path: '/CSS',
           redirect: "/CSSSkill",
-          component: () => import(/* webpackChunkName: "JS" */ './template/jsTemp.vue'),
+          component: () => import(/* webpackChunkName: "CSS" */ './template/jsTemp.vue'),
           children: css
         },
         {
@@ -61,7 +61,7 @@ let router =  new Router({
     }
   ],
 
-  scrollBehavior(to, from, position) {
+  scrollBehavior (to, from, position) {
     return {
       // 返回参数详见官网
       x: 100,
@@ -84,7 +84,8 @@ router.beforeResolve((to, from, next) => {
   next();
 });
 
-router.afterEach( (to, from, next) => {
+router.afterEach((to, from) => {
+  // 全局后置守卫,  不会接受 next 函数也不会改变导航本身
   console.log("global afterEach");
 })
 

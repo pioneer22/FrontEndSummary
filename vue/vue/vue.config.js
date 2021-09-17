@@ -1,3 +1,5 @@
+const path = require('path');
+
 // vue.config.js的主体配置
 module.exports = {
   // publicPath: '/work-items/electron-work',
@@ -20,6 +22,19 @@ module.exports = {
   },
 
   configureWebpack: {
-    devtool: 'source-map'
+    module: {
+      rules: [
+        {
+          test: /.vue$/,
+          exclude: /node_modules/,
+          loader: path.resolve(__dirname, './src/js/clearConsole.js')
+        },
+        {
+          test: /.js$/,
+          exclude: /node_modules/,
+          loader: path.resolve(__dirname, './src/js/clearConsole.js')
+        }
+      ]
+    }
   }
 };
